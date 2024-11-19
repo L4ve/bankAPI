@@ -133,7 +133,6 @@ Route::add('/transfer/new', function() use($db) {
     ]);
   }
 
-  //TODO: wykonaj przelew
   Transfer::new($source, $target, $amount, $db);
   header('Status: 200');
   return json_encode(['status' => 'OK']);
