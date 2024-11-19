@@ -112,7 +112,26 @@ Route::add('/transfer/new', function() use($db) {
       //opcjonalnie
       return json_encode(['error' => 'Invalid token']);
   }
-  
+  $userId = Token::getUserId($token, $db);
+  $source = Account::getAccountNo($userId, $db);
+  $target = $dataArray['target'];
+  $amount = $dataArray['amount'];
+  $sourceAccount = Account::getAccount($source, $db)
+      ->getArray();
+
+  // uniemożliwia dodanie przelewu z negatywną ilością
+  if ($amount < 0) {
+      header('HTTP/1.1 400 Bad Request');
+      return json_encode(['error' => 'Kwota jest ujemna']);
+  }
+  // jeżeli nie masz takiej ilości to będzie error
+  if($sourceAccount["amount"] - $amount < 0) {
+    header('HTTP/1.1 400 Request Error');
+    return json_encode([
+      'status' => 'Nie masz tyle pieniedzy',
+    ]);
+  }
+
 
   Transfer::new($source, $target, $amount, $db);
   header('Status: 200');
