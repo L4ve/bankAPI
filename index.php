@@ -125,7 +125,7 @@ Route::add('/transfer/new', function() use($db) {
       header('HTTP/1.1 400 Bad Request');
       return json_encode(['error' => 'Kwota jest ujemna']);
   }
-
+  // jeżeli nie masz takiej ilości to będzie error
   if($sourceAccount["amount"] - $amount < 0) {
     header('HTTP/1.1 400 Request Error');
     return json_encode([
